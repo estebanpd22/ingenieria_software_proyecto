@@ -243,7 +243,7 @@ Estos valores deben ser definidos por el negocio antes del inicio del desarrollo
 | Parámetro | Descripción | Valor por definir |
 |:---|:---|:---|
 | `radio_zona_km` | Radio en kilómetros para agrupar paquetes en la misma ruta | 5 km |
-| `hora_corte` | Hora del día en que las rutas abiertas pasan a "Lista para Despacho" | 6:00 pm |
+| `hora_corte` | Hora del día en que las rutas abiertas pasan a "Lista para Despacho" | 6:00 am |
 | `porcentaje_capacidad_maxima` | Porcentaje máximo de carga del vehículo | 90% ✓ |
 | `tiempo_maximo_ruta_horas` | Horas máximas de una ruta activa antes del cierre automático | 12 horas |
 | `reintentos_notificacion` | Número de reintentos ante fallo de notificación entre módulos | 3 ✓ |
