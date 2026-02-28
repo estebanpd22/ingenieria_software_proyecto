@@ -1,7 +1,7 @@
 # Contrato de Integración — Sistema de Gestión Logística
 
-**Versión**: 1.0  
-**Fecha**: 2026-02-23  
+**Versión**: 1.1  
+**Fecha**: 2026-02-27  
 **Elaborado por**: Equipo Módulo 2  
 **Estado**: Propuesta para revisión y aprobación de los tres equipos
 
@@ -19,7 +19,7 @@ Este documento establece formalmente los eventos y estructuras de datos que se i
 - La comunicación entre módulos ocurre únicamente a través de los eventos definidos en este documento.
 - El **Módulo 2 es la única fuente de verdad** sobre el estado de un paquete desde el momento del despacho en adelante.
 - El **Módulo 1 es la única fuente de verdad** sobre los datos del paquete (peso, dirección, tipo de mercancía, etc.).
-- El **Módulo 3 no consulta ni interactúa** con el Módulo 1 directamente. Toda la información que necesita la recibe del Módulo 2 al cierre de ruta.
+- El **Módulo** 3 la información que necesita la recibe del Módulo 2 al cierre de ruta y recibe la información de los estados del paquete sobre el Módulo 1.
 
 ---
 
@@ -69,26 +69,6 @@ Este documento establece formalmente los eventos y estructuras de datos que se i
 **Campos obligatorios**: todos.  
 **Nota**: Si falta algún campo, el Módulo 2 rechaza la solicitud y notifica al Módulo 1 con el detalle del error.
 
----
-
-## SECCIÓN 2: Módulo 2 → Módulo 1 // pendiente
-
-### Evento: `ruta_asignada`
-
-**Cuándo se emite**: Inmediatamente después de recibir `solicitar_ruta` y asignar el paquete a una ruta.  
-**Propósito**: Confirmarle al Módulo 1 que el paquete quedó vinculado a una ruta y darle la fecha estimada de despacho.
-
-```json
-{
-  "evento": "ruta_asignada",
-  "fecha_hora": "2026-02-22T08:30:05",
-  "paquete_id": "uuid-del-paquete",
-  "ruta_id": "uuid-de-la-ruta",
-  "zona_geografica": "Zona Norte",
-  "estado_ruta": "abierta | lista_para_despacho",
-  "fecha_estimada_despacho": "2026-02-23"
-}
-```
 
 ---
 
@@ -155,7 +135,7 @@ Se emite cuando el conductor registra la entrega exitosa con evidencia POD.
 }
 ```
 
-#### Caso 4 — Novedad en Bodega
+#### Caso 4 — Novedad de entrega Fallida
 Se emite cuando el conductor registra que no pudo completar la entrega.
 
 ```json
@@ -196,7 +176,7 @@ Se emite cuando el conductor registra que no pudo completar la entrega.
     "id": "uuid-de-la-ruta",
     "fecha": "2026-02-23",
     "fecha_hora_inicio": "2026-02-23T06:00:00",
-    "tipo_cierre": "manual | automático | forzado_despachador"
+    "tipo_cierre": "manual | automático "
   },
 
   "vehiculo": {
@@ -207,8 +187,7 @@ Se emite cuando el conductor registra que no pudo completar la entrega.
 
   "conductor": {
     "id": "uuid-del-conductor",
-    "nombre": "Juan Pérez",
-    "modelo_contratacion": "por_parada | recorrido_completo"
+    "nombre": "Juan Pérez"
   },
 
   "paradas": [
@@ -225,16 +204,6 @@ Se emite cuando el conductor registra que no pudo completar la entrega.
 
 ---
 
-## SECCIÓN 4: Manejo de Errores
-
-| Situación | Comportamiento esperado |
-|:---|:---|
-| Módulo 2 recibe `solicitar_ruta` con campos faltantes | Rechaza el evento, responde con error detallando qué campo falta, no crea ninguna ruta |
-| Módulo 1 no responde al recibir `actualizar_estado_paquete` | Módulo 2 reintenta máximo 3 veces con intervalo de 30 segundos, luego registra el fallo en log y alerta al despachador |
-| Módulo 3 no responde al recibir `ruta_cerrada` | Módulo 2 reintenta máximo 3 veces, la ruta **no se revierte**, el fallo queda en log para resolución manual |
-| Paquete llega con coordenadas GPS inválidas o vacías | Módulo 2 rechaza la solicitud e informa al Módulo 1 que el campo geográfico es obligatorio |
-
----
 
 ## SECCIÓN 5: Parámetros Configurables
 
@@ -246,7 +215,6 @@ Estos valores deben ser definidos por el negocio antes del inicio del desarrollo
 | `hora_corte` | Hora del día en que las rutas abiertas pasan a "Lista para Despacho" | 6:00 am |
 | `porcentaje_capacidad_maxima` | Porcentaje máximo de carga del vehículo | 90% ✓ |
 | `tiempo_maximo_ruta_horas` | Horas máximas de una ruta activa antes del cierre automático | 12 horas |
-| `reintentos_notificacion` | Número de reintentos ante fallo de notificación entre módulos | 3 ✓ |
 
 ---
 
@@ -302,7 +270,7 @@ Despacho
 
 | Versión | Fecha | Cambio | Autor |
 |:---|:---|:---|:---|
-| 1.0 | 2026-02-23 | Versión inicial | Equipo Módulo 2 |
+| 1.1 | 2026-02-27 | Equipo Módulo 2 |
 
 ---
 
